@@ -1,5 +1,6 @@
 local ui = {}
 
+player = require 'player'
 
 local function screenWidth()
 	return emu.screenwidth()
@@ -31,62 +32,116 @@ local function getGuardOrientation(value, positionX, playerNumber)
 	end 
 end
 
-function ui.get(player)
-	data = player.game.data
-	playerNumber = player.number
+local function drawText(x, y, value, color)
 	gui.text(
-		getConditionalPositionX(player.health.current, data.health.pos_X(playerNumber), playerNumber),
-		data.health.pos_Y, 
-		player.health.current,
-		data.health.color
+		x,
+		y,
+		value,
+		color
 	)
+end
+
+local function drawBar(x1, y1, x2, y2, fillColor, outlineColor)
 	gui.box(
-		data.guard.bar.pos_X(playerNumber), 
-		data.guard.bar.pos_Y, 
-		data.guard.bar.pos_X(playerNumber) + data.guard.bar.length, 
-		data.guard.bar.pos_Y + data.guard.bar.height, 
-		0x00000040,
-		0x000000FF
+		x1,
+		y1,
+		x2,
+		y2,
+		fillColor,
+		outlineColor
 	)
-	gui.box(
-		data.guard.bar2.pos_X(playerNumber), 
-		data.guard.bar2.pos_Y, 
-		getGuardOrientation(player.guard.current, data.guard.bar2.pos_X(playerNumber), playerNumber), 
-		data.guard.bar2.pos_Y + data.guard.bar.height, 
-		0x2961DEEE,
-		0
+end
+
+local function getHealthText(health, game, playerNumber)
+	return drawText(
+		getConditionalPositionX(
+			health.current, 
+			game.health.x(playerNumber), 
+			playerNumber
+		),
+		game.health.y, 
+		health.current,
+		game.health.color
 	)
-	gui.text(
-		data.guard.pos_X(playerNumber),
-		data.guard.pos_Y, 
-		"Guard"
+end
+
+local function getGuardBar(game, playerNumber)
+	return drawBar(
+		game.guard.bar.x(playerNumber), 
+		game.guard.bar.y, 
+		game.guard.bar.x(playerNumber) + game.guard.bar.length, 
+		game.guard.bar.y + game.guard.bar.height, 
+		game.guard.bar.fillColor,
+		game.guard.bar.outlineColor
 	)
-	if (player.super.value ~= data.super.max) then
-		gui.text(
-			getConditionalPositionX(player.super.value, data.super.pos_X(playerNumber), playerNumber),
-			data.super.pos_Y, 
-			player.super.value,
-			data.super.color
+end
+
+local function getGuardFillData(guard, game, playerNumber)
+	return drawBar(
+		game.guard.bar2.x(playerNumber), 
+		game.guard.bar2.y, 
+		getGuardOrientation(
+			guard.current, 
+			game.guard.bar2.x(playerNumber), 
+			playerNumber
+		), 
+		game.guard.bar2.y + game.guard.bar.height, 
+		game.guard.bar2.fillColor,
+		game.guard.bar2.outlineColor
+	)
+end
+
+local function getSuperText(super, game, playerNumber)
+	if (super.value ~= game.super.max) then
+		return drawText(
+			getConditionalPositionX(
+				super.value, 
+				game.super.x(playerNumber), 
+				playerNumber
+			),
+			game.super.y, 
+			super.value,
+			game.super.color
 		)
 	end
-	if (player.super.value == data.super.max) and (player.super.timeout ~= 0)  then
-		gui.text(
-			getConditionalPositionX(player.super.timeout, data.super.timeout.pos_X(playerNumber), playerNumber),
-			data.super.timeout.pos_Y, 
-			player.super.timeout,
-			data.super.timeout.color
+end
+
+local function getSuperTimeoutText(super, game, playerNumber)
+	if (super.value == game.super.max) and (super.timeout ~= 0)  then
+		return drawText(
+			getConditionalPositionX(
+				super.timeout, 
+				game.super.timeout.x(playerNumber), 
+				playerNumber
+			),
+			game.super.timeout.y, 
+			super.timeout,
+			game.super.timeout.color
 		)
 	end
-	gui.text(
-		data.stun.pos_X(playerNumber),
-		data.stun.pos_Y, 
-		"Stun:"..player.stun.current
+end
+
+local function getCustomText(text, data, playerNumber)
+	return drawText(
+		data.x(playerNumber),
+		data.y, 
+		text,
+		data.color
 	)
-	gui.text(
-		data.damage.pos_X(playerNumber),
-		data.damage.pos_Y, 
-	    "Damage:"..player.damage.hit
-	)
+end
+
+function ui.get(playerData)
+	playerNumber = player.getNumber(playerData)
+	data = player.getGameData(playerData)
+
+	getHealthText(playerData.health, data, playerNumber)
+	getGuardBar(data, playerNumber)
+	getGuardFillData(playerData.guard, data, playerNumber)
+	getCustomText("Guard:", data.guard, playerNumber)
+	getSuperText(playerData.super, data, playerNumber)
+	getSuperTimeoutText(playerData.super, data, playerNumber)
+	getCustomText("Stun:" .. playerData.stun.current, data.stun, playerNumber)
+	getCustomText("Damage:" .. playerData.damage.hit, data.damage, playerNumber)
 end
 
 return ui

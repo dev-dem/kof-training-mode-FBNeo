@@ -56,49 +56,55 @@ function profile.get()
 				health = {
 					value = getWordValue(base, 0x138), 
 					max = 103, 
-					pos_X = getPositionX(playerNumber, 124, 169), 
-					pos_Y = 21, 
+					x = getPositionX(playerNumber, 124, 169), 
+					y = 21, 
 					color = c.white
 				},
 				damage = {
-					pos_X = getPositionX(playerNumber, 105, 168),
-					pos_Y = 49
+					x = getPositionX(playerNumber, 105, 168),
+					y = 49,
+					color = c.white
 				},
 				guard = {
 					value = getWordValue(base, 0x146), 
 					max = 103, 
-					pos_X = getPositionX(playerNumber, 63, 222), 
-					pos_Y = 41,
+					x = getPositionX(playerNumber, 63, 222), 
+					y = 41,
+					color = c.white,
 					bar = {
-						pos_X = getPositionX(playerNumber, 84, 167), 
-						pos_Y = 41,
+						x = getPositionX(playerNumber, 84, 167), 
+						y = 41,
 						length = 52, 
-						height = 6
+						height = 6,
+						fillColor = 0x00000040,
+						outlineColor = 0x000000FF
 					},
 					bar2 = {
-						pos_X = getPositionX(playerNumber, 136, 167), 
-						pos_Y = 41
-					},
-					color = c.cyan
+						x = getPositionX(playerNumber, 136, 167), 
+						y = 41,
+						fillColor = 0x2961DEEE,
+						outlineColor = 0
+					}
 				},
 				super = {
 					value = getByteValue(base, 0x0E8), 
 					max = 128, 
-					pos_X = getPositionX(playerNumber, 75, 218), 
-					pos_Y = 205, 
+					x = getPositionX(playerNumber, 75, 218), 
+					y = 205, 
 					color = c.white,
 					timeout = {
 						value = getByteValue(base, 0x0EA), 
 						max = 64, 
-						pos_X = getPositionX(playerNumber, 75, 218), 
-						pos_Y = 193, 
+						x = getPositionX(playerNumber, 75, 218), 
+						y = 193, 
 						color = c.white
 					}
 				},
 				stun = {
-					pos_X = getPositionX(playerNumber, 105, 168), 
-					pos_Y = 57, 
-					value = getWordValue(base, 0x13E)
+					x = getPositionX(playerNumber, 105, 168), 
+					y = 57, 
+					value = getWordValue(base, 0x13E),
+					color = c.white
 				},
 			},
 		},

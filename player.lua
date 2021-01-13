@@ -44,7 +44,11 @@ function player.get(player, key)
 end 
 
 function player.getNumber(player)
-	return player['player']
+	return player.number
+end 
+
+function player.getGameData(player)
+	return player.game.data
 end 
 
 local function getBase(playerNumber, game)
