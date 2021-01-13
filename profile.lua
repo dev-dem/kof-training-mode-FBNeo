@@ -107,6 +107,12 @@ function profile.get()
 					color = c.white
 				},
 			},
+			cheats = {
+				time = {
+					address = 0x10A836,
+					value = 0x60
+				}
+			}
 		},
 		{
 			games = {"kof97"},

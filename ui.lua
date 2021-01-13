@@ -130,14 +130,14 @@ local function getCustomText(text, data, playerNumber)
 	)
 end
 
-function ui.get(playerData)
+function ui.getOSD(playerData)
 	playerNumber = player.getNumber(playerData)
 	data = player.getGameData(playerData)
 
 	getHealthText(playerData.health, data, playerNumber)
 	getGuardBar(data, playerNumber)
 	getGuardFillData(playerData.guard, data, playerNumber)
-	getCustomText("Guard:", data.guard, playerNumber)
+	getCustomText("Guard", data.guard, playerNumber)
 	getSuperText(playerData.super, data, playerNumber)
 	getSuperTimeoutText(playerData.super, data, playerNumber)
 	getCustomText("Stun:" .. playerData.stun.current, data.stun, playerNumber)

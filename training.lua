@@ -29,8 +29,8 @@ function updateGameplay()
 end
 
 function addUi()
-	ui.get(p1)
-	ui.get(p2)
+	ui.getOSD(p1)
+	ui.getOSD(p2)
 end
 
 -------------------------------------------------
