@@ -95,7 +95,7 @@ function profile.get()
 					timeout = {
 						value = getByteValue(base, 0x0EA), 
 						max = 64, 
-						x = getPositionX(playerNumber, 75, 218), 
+						x = getPositionX(playerNumber, 50, 218), 
 						y = 193, 
 						color = c.white
 					}
@@ -106,6 +106,10 @@ function profile.get()
 					value = getWordValue(base, 0x13E),
 					color = c.white
 				},
+				inputs = {
+					x = getPositionX(playerNumber, 49, 249),
+					y = 72
+				}
 			},
 			cheats = {
 				time = {

@@ -27,9 +27,9 @@ function player.new(number)
 		inputs = {
 			current = {},
 			previous = {},
-			history = {}
+			history = {-1}
 		},
-		buttons = {},
+		buttons = inputs.getButtons(number),
 		memory = {},
 		memory2 = {}
 	}
