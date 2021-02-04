@@ -1,33 +1,39 @@
 local ui = {}
 
 local function getConditionalPositionX(value, positionX, playerNumber)
+	local x = 0
 	if (playerNumber == 1) then 
 		if (value >= 0) and (value <= 9) then
-			return positionX + 8
+			x = positionX + 8
 		elseif (value >= 10) and (value <= 99) then
-			return positionX + 4
+			x = positionX + 4
 		elseif (value >= 100) then
-			return positionX
+			x = positionX
 		end
 	else
-		return positionX
+		x = positionX
 	end
+	return x
 end
 
 local function getGuardOrientation(value, positionX, playerNumber)
+ 	local x = 0
 	if (playerNumber == 1) then
-		return positionX - value * 0.5
+		x = positionX - value * 0.5
 	else
-		return positionX + value * 0.5 + 1
+		x = positionX + value * 0.5 + 1
 	end 
+	return x
 end
 
 local function getInputOrientation(positionX, playerNumber)
+	local x = 0
 	if (playerNumber == 1) then
-		return positionX - 40
+		x = positionX - 40
 	else
-		return positionX + 12
-	end 	
+		x = positionX + 12
+	end
+	return x 	
 end
 
 local function drawText(x, y, value, color)
@@ -128,70 +134,90 @@ local function getCustomText(text, data, playerNumber)
 	)
 end
 
-local function guiTextAlignRight(x, y, text, color)
+local function drawTextAlignRight(x, y, text, color)
 	local t = tostring(text)
 	color = color or "white"
 	gui.text(x - #t, y, t, color)
 end
 
 local function drawDpad(dpadX, dpadY, sideLength)
-	gui.box(dpadX, dpadY, dpadX + (sideLength * 3), dpadY + sideLength, "black", "white")
-	gui.box(dpadX + sideLength, dpadY - sideLength, dpadX + (sideLength * 2), dpadY + (sideLength * 2), "black", "white")
-	gui.box(dpadX + 1, dpadY + 1, dpadX + (sideLength * 3) - 1, dpadY + sideLength - 1, "black")
+	gui.box(
+		dpadX, 
+		dpadY, 
+		dpadX + (sideLength * 3), 
+		dpadY + sideLength, 
+		"black", 
+		"white"
+	)
+	gui.box(
+		dpadX + sideLength, 
+		dpadY - sideLength, 
+		dpadX + (sideLength * 2), 
+		dpadY + (sideLength * 2), 
+		"black", 
+		"white"
+	)
+	gui.box(
+		dpadX + 1, 
+		dpadY + 1, 
+		dpadX + (sideLength * 3) - 1, 
+		dpadY + sideLength - 1, 
+		"black"
+	)
 end
 
 local function drawInput(hex, x, y) -- Draws the dpad and buttons
 	local buttonOffset = 0
-	if bit.band(hex, 0x10) == 0x10 then --A
-		gui.text(x + 12, y - 1, "A", "red")
+	if band(hex, 0x10) == 0x10 then --A
+		drawText(x + 12, y - 1, "A", "red")
 		buttonOffset = buttonOffset + 6
 	end
-	if bit.band(hex, 0x20) == 0x20 then --B
-		gui.text(x + 12 + buttonOffset, y - 1, "B", "yellow")
+	if band(hex, 0x20) == 0x20 then --B
+		drawText(x + 12 + buttonOffset, y - 1, "B", "yellow")
 		buttonOffset = buttonOffset + 6
 	end
-	if bit.band(hex, 0x40) == 0x40 then --C
-		gui.text(x + 12 + buttonOffset, y - 1, "C", "green")
+	if band(hex, 0x40) == 0x40 then --C
+		drawText(x + 12 + buttonOffset, y - 1, "C", "green")
 		buttonOffset = buttonOffset + 6
 	end
-	if bit.band(hex, 0x80) == 0x80 then --S
-		gui.text(x + 12 + buttonOffset, y - 1, "D", "blue")
+	if band(hex, 0x80) == 0x80 then --D
+		drawText(x + 12 + buttonOffset, y - 1, "D", "blue")
 	end
-	if bit.band(hex, 0x0F) > 0 then
+	if band(hex, 0x0F) > 0 then
 		drawDpad(x, y, 3)
 	end
-	if bit.band(hex, 0x01) == 0x01 then --Up
-		gui.box(x + 4, y, x + 5, y - 2, "red")
+	if band(hex, 0x01) == 0x01 then --Up
+		drawBar(x + 4, y, x + 5, y - 2, "red")
 	end
-	if bit.band(hex, 0x02) == 0x02 then --Down
-		gui.box(x + 4, y + 3, x + 5, y + 5, "red")
+	if band(hex, 0x02) == 0x02 then --Down
+		drawBar(x + 4, y + 3, x + 5, y + 5, "red")
 	end
-	if bit.band(hex, 0x04) == 0x04 then --Left
-		gui.box(x + 1, y + 1, x + 3, y + 2, "red")
+	if band(hex, 0x04) == 0x04 then --Left
+		drawBar(x + 1, y + 1, x + 3, y + 2, "red")
 	end
-	if bit.band(hex, 0x08) == 0x08 then --Right
-		gui.box(x + 6, y + 1, x + 8, y + 2, "red")
+	if band(hex, 0x08) == 0x08 then --Right
+		drawBar(x + 6, y + 1, x + 8, y + 2, "red")
 	end 
 end
 
 local function drawFrameInputs(player)
-	x = player.game.data.inputs.x(player.number)
-	y = player.game.data.inputs.y
+	local x = player.game.data.inputs.x(player.number)
+	local y = player.game.data.inputs.y
 
 	for i = 1, 10, 1 do
 		local hex = player.inputs.history[i]
 		if hex ~= -1 then
-			local count = bit.band(0xFFFF, hex)
-			local input = bit.rshift(hex, 16)
-			guiTextAlignRight(x, y + (11 * i), count, "white")
+			local count = band(0xFFFF, hex)
+			local input = rShift(hex, 16)
+			drawTextAlignRight(x, y + (11 * i), count, "white")
 			drawInput(input, getInputOrientation(x, player.number), y + 1 + (11 * i))
 		end
 	end
 end
 
 function ui.getOSD(playerData)
-	playerNumber = player.getNumber(playerData)
-	data = player.getGameData(playerData)
+	local playerNumber = player.getNumber(playerData)
+	local data = player.getGameData(playerData)
 
 	getHealthText(playerData.health, data, playerNumber)
 	getGuardBar(data, playerNumber)
@@ -205,6 +231,26 @@ end
 
 function ui.getInputs(playerData)
 	drawFrameInputs(playerData)
+end
+
+function ui.getRecordingText(playerData)
+	local data = player.getGameData(playerData)
+	drawText(
+		data.record.x, 
+		data.record.y, 
+		"Recording", 
+		data.record.color
+	)
+end
+
+function ui.getPlaybackText(playerData)
+	local data = player.getGameData(playerData)
+	drawText(
+		data.playback.x, 
+		data.playback.y, 
+		"Playing", 
+		data.playback.color
+	)
 end
 
 return ui
