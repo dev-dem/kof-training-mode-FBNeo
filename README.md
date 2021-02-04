@@ -68,7 +68,9 @@ Video -> Select blittler ->  DirectX9Alt
 ```
 Game -> Lua Scripting ->  New Lua Script Window
 ```
-Browse training.lua file and click on run
+Browse **training.lua** file and click on run
+
+![Screenshot2](https://i.ibb.co/Jk3MyKZ/training-screenshot2.png)
 
 ### Shortcuts
 
