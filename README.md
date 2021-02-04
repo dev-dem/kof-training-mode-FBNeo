@@ -1,5 +1,7 @@
 # The King of Fighters Training Mode for FB/Fightcade
 
+![Screenshot](https://i.ibb.co/9v483Tj/training-screenshot.png)
+
 I just recently discovered lua scripting and this is my first attempt of a training mode for KOF.
 This is a refactored version of the existing trainings like:
 
@@ -87,3 +89,12 @@ local options = {
 
 - Hitboxes
 - Support more kof versions
+
+### Contact
+
+Follow me on [Twitter](https://twitter.com/Arpeggiate)  
+Subscribe to my [Youtube](https://www.youtube.com/user/DemKusa) channel
+
+### Bugs
+
+If you have any issues or improvements please create a new item [here](https://github.com/dev-dem/kof-training-mode-FBNeo/issues)
