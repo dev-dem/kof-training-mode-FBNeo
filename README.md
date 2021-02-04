@@ -6,6 +6,7 @@ I just recently discovered lua scripting and this is my first attempt of a train
 This is a refactored version of the existing trainings like:
 
 https://github.com/maximusmaxy/JoJoban-Training-Mode-Menu-FBNeo
+
 https://github.com/Jesuszilla/mame-rr-scripts
 
 ### Features
