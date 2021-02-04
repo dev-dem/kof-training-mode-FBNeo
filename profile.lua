@@ -1,39 +1,26 @@
 local profile = {}
-local rb, rbs, rw, rws, rd, fc = memory.readbyte, memory.readbytesigned, memory.readword, memory.readwordsigned, memory.readdword, emu.framecount
-
-local c = { --colors
-	bg            = {fill   = 0x00000040, outline  = 0x000000FF},
-	stun_level    = {normal = 0xFF0000FF, overflow = 0xFFAAAAFF},
-	stun_timeout  = {normal = 0xFFFF00FF, overflow = 0xFFA000FF},
-	stun_duration = {normal = 0x00C0FFFF, overflow = 0xA0FFFFFF},
-	stun_grace    = {normal = 0x00FF00FF, overflow = 0xFFFFFFFF},
-	white  = 0xFFFFFFFF,
-	green  = 0x00FF00FF,
-	yellow = 0xFFFF00FF,
-	pink   = 0xFFB0FFFF,
-	gray   = 0xCCCCFFFF,
-	cyan   = 0x00FFFFFF,
-}
 
 local function getPositionX(playerNumber, p1PositionX, p2PositionX)
 	return function(playerNumber)
+		local x = 0
 		if (playerNumber == 1) then
-			return p1PositionX
+			x = p1PositionX
 		else
-			return p2PositionX
+			x = p2PositionX
 		end
+		return x
 	end
 end
 
 local function getByteValue(base, offset)
 	return function(base) 
-		return rb(base + offset) 
+		return readByte(base + offset) 
 	end
 end
 
 local function getWordValue(base, offset)
 	return function(base) 
-		return rw(base + offset) 
+		return readWord(base + offset) 
 	end
 end
 
@@ -53,24 +40,26 @@ function profile.get()
 				p,p,p,p
 			}, 
 			data = {
+				side = getByteValue(base, 0x31),
 				health = {
 					value = getWordValue(base, 0x138), 
 					max = 103, 
 					x = getPositionX(playerNumber, 124, 169), 
 					y = 21, 
-					color = c.white
+					color = "white"
 				},
 				damage = {
 					x = getPositionX(playerNumber, 105, 168),
 					y = 49,
-					color = c.white
+					color = "white",
+					max = 500
 				},
 				guard = {
 					value = getWordValue(base, 0x146), 
 					max = 103, 
 					x = getPositionX(playerNumber, 63, 222), 
 					y = 41,
-					color = c.white,
+					color = "white",
 					bar = {
 						x = getPositionX(playerNumber, 84, 167), 
 						y = 41,
@@ -91,35 +80,50 @@ function profile.get()
 					max = 128, 
 					x = getPositionX(playerNumber, 75, 218), 
 					y = 205, 
-					color = c.white,
+					color = "white",
 					timeout = {
 						value = getByteValue(base, 0x0EA), 
 						max = 64, 
-						x = getPositionX(playerNumber, 50, 218), 
+						x = getPositionX(playerNumber, 75, 218), 
 						y = 193, 
-						color = c.white
+						color = "white"
 					}
 				},
 				stun = {
 					x = getPositionX(playerNumber, 105, 168), 
 					y = 57, 
 					value = getWordValue(base, 0x13E),
-					color = c.white
+					color = "white",
+					max = 103
 				},
 				inputs = {
 					x = getPositionX(playerNumber, 49, 249),
 					y = 72
+				},
+				record = {
+					x = 138,
+					y = 65,
+					color = "red"
+				},
+				playback = {
+					x = 138,
+					y = 65,
+					color = "green"
 				}
 			},
 			cheats = {
 				time = {
 					address = 0x10A836,
 					value = 0x60
+				},
+				health = {
+					address = 0x138,
+					value = 103,
 				}
 			}
 		},
 		{
-			games = {"kof97"},
+			name = {"kof97"}
 		}
 	}
 end
