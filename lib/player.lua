@@ -40,9 +40,7 @@ function player.new(number)
 				memory = {},
 				index = 1
 			},
-		},
-		memory = {},
-		memory2 = {}
+		}
 	}
 end
 
