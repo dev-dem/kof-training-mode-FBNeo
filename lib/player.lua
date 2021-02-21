@@ -68,12 +68,34 @@ end
 function player.recoverLife(player)
 	local data = player.game.data
 	local base = getBase(player.number, player.game)
+	local enabled = player.game.cheats.health.enabled
+	local mode = player.game.cheats.health.mode
 	local address = player.game.cheats.health.address
 	local value = player.game.cheats.health.value
+	local max = player.game.cheats.health.max
 	local current = player.health.current 
 
-	if current <= 20 then
-		writeWord(base + address, value)
+	if enabled then 
+		if mode == "refill" then
+			if current <= value then
+				writeWord(base + address, max)
+			end
+		elseif mode == "fixed" then
+			writeWord(base + address, value)
+		end
+	end
+end
+
+function player.enableCheats(game)
+	local cheats = game.cheats
+
+	for k, v in pairs(cheats) do
+		local address = v.address
+		local value = v.value
+
+		if v.enabled and k ~= "health" then
+			writeByte(address, value)
+		end
 	end
 end
 
