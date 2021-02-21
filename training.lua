@@ -1,27 +1,39 @@
 print("The King of Fighters Training Mode")
-print("Version: 0.4.0")
+print("Version: 0.5.0")
 print("Developed by Dem")
 print("Twitter: @Arpeggiate")
 print("Youtube: https://www.youtube.com/user/DemKusa")
 print("January, 2021")
+print("_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/")
+print("SHORTCUTS")
+print("alt + 1 to toggle OSD display")
+print("alt + 2 to toggle inputs display")
+print("alt + 3 to toggle hitboxes")
+print("alt + 4 to record inputs")
+print("alt + 5 to play inputs")
+print("_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/")
 
 -------------------------------------------------
 -- Options
 -------------------------------------------------
 local options = {
-	replay = false,    -- disables infinite time/health/record-play functionality
-	osdDisplay = 3,   -- 0 = disabled 1 = player1  2 = player2  3 = both  
-	inputDisplay = 3  -- 0 = disabled 1 = player1  2 = player2  3 = both
+	replay = false,   -- disables infinite time/health/record-play functionality
+	osdDisplay = 3,   -- 0 = disabled  1 = player1  2 = player2  3 = both  
+	inputDisplay = 3, -- 0 = disabled  1 = player1  2 = player2  3 = both
+	hitboxDisplay = 1 -- 0 = disabled  1 = hurtbox and hitbox  2 = adds pushbox  3 = adds throwable box  
 }
+
 -------------------------------------------------
 -- Global Module Variables
 -------------------------------------------------
-player = require 'player'
-profile = require 'profile'
-game = require 'game'
-ui = require 'ui'
-inputs = require 'inputs'
-fn = require 'functions'
+player = require 'lib.player'
+profile = require 'lib.profile'
+game = require 'lib.game'
+ui = require 'lib.ui'
+inputs = require 'lib.inputs'
+fn = require 'lib.functions'
+hitboxes = require "lib.hitboxes"
+
 -------------------------------------------------
 -- Global Variables
 -------------------------------------------------
@@ -38,26 +50,26 @@ rShift = bit.rshift
 band = bit.band
 bor = bit.bor
 bxor = bit.bxor
-frameCount = emu.framecount
 
 -------------------------------------------------
 -- Local variables
 -------------------------------------------------
-
 -- getting the current rom profile data
-local game = game.getData()
+local gameData = game.getData()
+if not game.isSupported(gameData) then
+	do return end
+end
 -- creating player table objects
 local p1 = player.new(1)
 local p2 = player.new(2)
 
 -- adding game data to player object
-player.set(p1, "game", game)
-player.set(p2, "game", game)
+player.set(p1, "game", gameData)
+player.set(p2, "game", gameData)
 
 -------------------------------------------------
 -- Data update functions
 -------------------------------------------------
-
 local function updateMemory()
 	player.update(p1)
 	player.update(p2)
@@ -76,7 +88,6 @@ end
 -------------------------------------------------
 -- OSD Functions
 -------------------------------------------------
-
 local function initOSD()
 	if options.osdDisplay == 1 then
 		ui.getOSD(p1)
@@ -99,22 +110,40 @@ local function initInputs()
 	end
 end
 
+local function setHitboxOptions()
+	if options.hitboxDisplay == 0 then
+		hitboxes.disable()
+	elseif options.hitboxDisplay == 1 then
+		hitboxes.display()
+	elseif options.hitboxDisplay == 2 then
+		hitboxes.displayPushboxes()
+	elseif options.hitboxDisplay == 3 then
+		hitboxes.displayThrowable()
+	end
+end 
+
 -------------------------------------------------
 -- Hotkey Functions
 -------------------------------------------------
-
 local function hotkeyOsdDisplay()
+	options.osdDisplay = options.osdDisplay + 1
 	if options.osdDisplay > 3 then 
 		options.osdDisplay = 0 
 	end
-	options.osdDisplay = options.osdDisplay + 1
 end
 
 local function hotkeyInputDisplay()
+	options.inputDisplay = options.inputDisplay + 1
 	if options.inputDisplay > 3 then 
 		options.inputDisplay = 0 
 	end
-	options.inputDisplay = options.inputDisplay + 1
+end
+
+local function hotkeyHitboxDisplay()
+	options.hitboxDisplay = options.hitboxDisplay + 1
+	if options.hitboxDisplay > 3 then 
+		options.hitboxDisplay = 0 
+	end
 end
 
 local function hotkeyRecording()
@@ -137,14 +166,17 @@ local function hotkeyPlayback()
 	end
 end
 
-
+-------------------------------------------------
+-- Gameplay cheats
+-------------------------------------------------
 local function updateGameplay()
 	if not options.replay then 
-		writeByte(0x10A836,0x60) --infinite time
+		player.enableCheats(gameData)
 		player.recoverLife(p1)
 		player.recoverLife(p2)
 	end
 end
+
 -------------------------------------------------
 -- Register Hotkey Section
 -------------------------------------------------
@@ -158,20 +190,36 @@ input.registerhotkey(2, function() -- alt + 2 = Inputs Display
 	gui.clearuncommitted()
 end)
 
-input.registerhotkey(3, function() -- alt + 3 = Record Inputs
+input.registerhotkey(3, function() -- alt + 3 = hitboxes
+	hotkeyHitboxDisplay()
+	gui.clearuncommitted()
+end)
+
+input.registerhotkey(4, function() -- alt + 4 = Record Inputs
 	hotkeyRecording()
 	gui.clearuncommitted()
 end)
 
-input.registerhotkey(4, function() -- alt + 4 = Play Inputs
+input.registerhotkey(5, function() -- alt + 5 = Play Inputs
 	hotkeyPlayback()
 	gui.clearuncommitted()
 end)
 
 -------------------------------------------------
+-- Hooks
+-------------------------------------------------
+emu.registerafter(function() 
+	hitboxes.update() 
+end)
+
+gui.register(function()
+	setHitboxOptions()
+	hitboxes.render() 
+end)
+
+-------------------------------------------------
 -- Main Emulation Loop
 -------------------------------------------------
-
 while true do
 	updateMemory()
 	updateInputs()
