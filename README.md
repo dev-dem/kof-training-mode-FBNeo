@@ -41,7 +41,7 @@ you can use git
 git clone https://github.com/dev-dem/kof-training-mode-FBNeo.git 
 ```
 
-or you can [download](https://github.com/dev-dem/kof-training-mode-FBNeo/archive/master.zip) and extract the folder into the working folder 
+or you can [download](https://github.com/dev-dem/kof-training-mode-FBNeo/releases/download/0.5.0/kof-training-mode-FBNeo-0.5.0.zip) and extract the folder into the working folder 
 
 #### Step 2: Execute Fightcade2 FBNeo emulator
 You can click on the Fightcade2 "TEST GAME" button in the supported games rooms or execute it manually
